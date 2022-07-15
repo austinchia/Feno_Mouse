@@ -51,58 +51,7 @@ transform_data <- function(x) {
 # applies function to transform data
 feno_normalized <- transform_data(feno_raw[,-1])
 
-#  === runs method 1 pca =====
-
-pca_res <- prcomp(t(feno_normalized), scale=TRUE)
-summary(pca_res)
-
-
-
-# var_explained <- pca_res$sdev^2/sum(pca_res$sdev^2)
-# 
-# pca_res$x %>% 
-#   as.data.frame %>%
-#   ggplot(aes(x=PC1,y=PC2)) + geom_point(size=1) +
-#   theme_bw(base_size=32) + 
-#   labs(x=paste0("PC1: ",round(var_explained[1]*100,1),"%"),
-#        y=paste0("PC2: ",round(var_explained[2]*100,1),"%")) +
-#   theme(legend.position="top")
-
-# ==== runs method 2 pca =====
-
-pca.var <- pca_res$sdev^2
-pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
-
-pca.data <- data.frame(Sample = rownames(pca_res$x),
-                       X = pca_res$x[,1],
-                       Y = pca_res$x[,2])
-
-ggplot(data=pca.data, aes(x=X, y=Y, label=Sample)) +
-  geom_text_repel(max.overlaps = Inf, point.size = NA) +
-  geom_text() +
-  xlab(paste("PC1 - ", pca.var.per[1], "%", sep="")) +
-  ylab(paste("PC2 - ", pca.var.per[2], "%", sep="")) +
-  theme_bw() +
-  ggtitle("My PCA Graph")
-
-# ==== factoextra method 3 ====
-library(factoextra)
-library("FactoMineR")
-
-res.pca <- PCA(t(feno_normalized),  graph = FALSE)
-
-
-fviz_pca_biplot(pca_res,
-             repel = FALSE,
-             geom = "point",
-             show.clust.cent = TRUE,
-             ellipse.type = "norm",
-             ggtheme = theme_minimal(),
-             addEllipses = FALSE,
-             col.ind=df$Kingdom,
-             alpha = 0)
-
-# =========== Metaboanalyst ================
+# =========== runs Metaboanalyst to get PCA ================
 
 library(MetaboAnalystR)
 
